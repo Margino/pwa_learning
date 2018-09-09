@@ -1,5 +1,9 @@
 var deferredPrompt;
 
+if (!window.Promise) {
+    window.Promise = Promise;
+}
+
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker
         .register('/sw.js')
@@ -34,3 +38,28 @@ promise.then((text) => {
 });
 
 console.log('This is executed right after setTimeout (1)');
+
+fetch('http://httpbin.org/ips').then((response) => {
+    console.log(response);
+    return response.json();
+}).then((data) => {
+    console.log(data);
+}).catch((err) => {
+    console.log(err);
+});
+
+fetch('https://httpbin.org/post', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    },
+    mode: 'cors',
+    body: JSON.stringify({message: 'Does this work?'})
+}).then((response) => {
+    return response.json();
+}).then((data) => {
+    console.log(data);
+}).catch((err) => {
+    console.log(err);
+});
