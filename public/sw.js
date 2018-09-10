@@ -7,7 +7,9 @@ self.addEventListener('install', (e) => {
         .then((cache) => {
             console.log('[Service worker] Precaching App');
             // add files to the cache
-            cache.add('/src/js/app.js')
+            cache.add('/');
+            cache.add('/index.html');
+            cache.add('/src/js/app.js');
         })
   );
 });
