@@ -3,7 +3,7 @@ self.addEventListener('install', (e) => {
   // use event.waitUntil() because of acync
   e.waitUntil(
       // 'static' is just an arbitraty name for the cache
-      caches.open('static')
+      caches.open('static-v2')
         .then((cache) => {
             console.log('[Service worker] Precaching App');
             // add files to the cache
@@ -50,7 +50,7 @@ self.addEventListener('fetch', (e) => {
                             })
                     })
                     .catch((err) => {
-                         
+
                     })
             }
         })
