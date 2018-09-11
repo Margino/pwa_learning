@@ -7,9 +7,21 @@ self.addEventListener('install', (e) => {
         .then((cache) => {
             console.log('[Service worker] Precaching App');
             // add files to the cache
-            cache.add('/');
-            cache.add('/index.html');
-            cache.add('/src/js/app.js');
+            cache.addAll([
+                '/',
+                '/index.html',
+                '/src/js/app.js',
+                '/src/js/feed.js',
+                '/src/js/promise.js',
+                '/src/js/fetch.js',
+                '/src/js/material.min.js',
+                '/src/css/app.css',
+                '/src/css/feed.css',
+                '/src/images/main-image.jpg',
+                '/src/css/material.indigo-pink.min.css',
+                '/src/css/roboto.css',
+                '/src/css/icon.css'
+            ]);
         })
   );
 });
