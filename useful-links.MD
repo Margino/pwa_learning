@@ -1,14 +1,8 @@
 # Useful Links
 
-<<<<<<< HEAD
-## Web app vanifest
-
-- [MDN Article on the Web App Manifest (includes List of all Properties)]h(ttps://developer.mozilla.org/en-US/docs/Web/Manifest)
-=======
 ## The web app manifest
 
 - [MDN Article on the Web App Manifest (includes List of all Properties)](https://developer.mozilla.org/en-US/docs/Web/Manifest)
->>>>>>> master
 - [A detailed Web App Manifest Explanation by Google](https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/)
 
 ## The service worker
