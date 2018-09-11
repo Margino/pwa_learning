@@ -39,7 +39,19 @@ self.addEventListener('fetch', (e) => {
                 // get the cached files
                 return response;
             } else {
-                return fetch(e.request);
+                // return not cached files
+                return fetch(e.request)
+                    .then((res) => {
+                        // dynamic chace
+                        return caches.open('dynamic')
+                            .then((cache) => {
+                                cache.put(e.request.url, res.clone());
+                                return res;
+                            })
+                    })
+                    .catch((err) => {
+                         
+                    })
             }
         })
   );
