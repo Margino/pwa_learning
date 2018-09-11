@@ -1,4 +1,4 @@
-const CACHE_STATIC_NAME = 'static-v9';
+const CACHE_STATIC_NAME = 'static-v11';
 const CACHE_DYNAMIC_NAME = 'dynamic-v4';
 
 self.addEventListener('install', (e) => {
@@ -13,6 +13,7 @@ self.addEventListener('install', (e) => {
             cache.addAll([
                 '/',
                 '/index.html',
+                '/offline.html',
                 '/src/js/app.js',
                 '/src/js/feed.js',
                 '/src/js/promise.js',
@@ -64,7 +65,10 @@ self.addEventListener('fetch', (e) => {
                             })
                     })
                     .catch((err) => {
-
+                        return caches.open(CACHE_STATIC_NAME)
+                            .then((cache) => {
+                                return cache.match('/offline.html');
+                            })
                     })
             }
         })
