@@ -1,9 +1,12 @@
+const CACHE_STATIC_NAME = 'static-v4';
+const CACHE_DYNAMIC_NAME = 'dynamic-v2';
+
 self.addEventListener('install', (e) => {
   console.log('[Service Worker] Installing Service Worker ...', e);
   // use event.waitUntil() because of acync
   e.waitUntil(
       // 'static' is just an arbitraty name for the cache
-      caches.open('static-v2')
+      caches.open(CACHE_STATIC_NAME)
         .then((cache) => {
             console.log('[Service worker] Precaching App');
             // add files to the cache
@@ -32,7 +35,7 @@ self.addEventListener('activate', (e) => {
       caches.keys()
         .then((keyList) => {
             return Promise.all(keyList.map((key) => {
-                if (key !== 'static-v2' && key !== 'dynamic') {
+                if (key !== CACHE_STATIC_NAME && key !== CACHE_DYNAMIC_NAME) {
                     console.log('[Service worker] Removing old cache.', key);
                     return caches.delete(key);
                 }
@@ -54,7 +57,7 @@ self.addEventListener('fetch', (e) => {
                 return fetch(e.request)
                     .then((res) => {
                         // dynamic chace
-                        return caches.open('dynamic')
+                        return caches.open(CACHE_DYNAMIC_NAME)
                             .then((cache) => {
                                 cache.put(e.request.url, res.clone());
                                 return res;
