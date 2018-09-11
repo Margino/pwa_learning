@@ -28,6 +28,17 @@ self.addEventListener('install', (e) => {
 
 self.addEventListener('activate', (e) => {
   console.log('[Service Worker] Activating Service Worker ...', e);
+  e.waitUntil(
+      caches.keys()
+        .then((keyList) => {
+            return Promise.all(keyList.map((key) => {
+                if (key !== 'static-v2' && key !== 'dynamic') {
+                    console.log('[Service worker] Removing old cache.', key);
+                    return caches.delete(key);
+                }
+            }));
+        })
+  );
   return self.clients.claim();
 });
 
