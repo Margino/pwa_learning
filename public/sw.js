@@ -46,31 +46,37 @@ self.addEventListener('activate', (e) => {
   return self.clients.claim();
 });
 
+// self.addEventListener('fetch', (e) => {
+//   e.respondWith(
+//       caches.match(e.request)
+//         .then((response) => {
+//             if (response) {
+//                 // get the cached files
+//                 return response;
+//             } else {
+//                 // return not cached files
+//                 return fetch(e.request)
+//                     .then((res) => {
+//                         // dynamic chace
+//                         return caches.open(CACHE_DYNAMIC_NAME)
+//                             .then((cache) => {
+//                                 cache.put(e.request.url, res.clone());
+//                                 return res;
+//                             })
+//                     })
+//                     .catch((err) => {
+//                         return caches.open(CACHE_STATIC_NAME)
+//                             .then((cache) => {
+//                                 return cache.match('/offline.html');
+//                             })
+//                     })
+//             }
+//         })
+//   );
+// });
+
 self.addEventListener('fetch', (e) => {
-  e.respondWith(
-      caches.match(e.request)
-        .then((response) => {
-            if (response) {
-                // get the cached files
-                return response;
-            } else {
-                // return not cached files
-                return fetch(e.request)
-                    .then((res) => {
-                        // dynamic chace
-                        return caches.open(CACHE_DYNAMIC_NAME)
-                            .then((cache) => {
-                                cache.put(e.request.url, res.clone());
-                                return res;
-                            })
-                    })
-                    .catch((err) => {
-                        return caches.open(CACHE_STATIC_NAME)
-                            .then((cache) => {
-                                return cache.match('/offline.html');
-                            })
-                    })
-            }
-        })
-  );
+    e.respondWith(
+        caches.match(e.request);
+    )
 });
