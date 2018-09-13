@@ -36,7 +36,7 @@ self.addEventListener('activate', (e) => {
       caches.keys()
         .then((keyList) => {
             return Promise.all(keyList.map((key) => {
-                if (key !== CACHE_STATIC_NAME && key !== CACHE_DYNAMIC_NAME) {
+                if (key !== CACHE_STATIC_NAME && key != CACHE_DYNAMIC_NAME) {
                     console.log('[Service worker] Removing old cache.', key);
                     return caches.delete(key);
                 }
@@ -83,8 +83,28 @@ self.addEventListener('activate', (e) => {
 // });
 
 // Network only
+// self.addEventListener('fetch', (e) => {
+//     e.respondWith(
+//         fetch(e.request);
+//     );
+// });
+
+// Network with cache fallback
 self.addEventListener('fetch', (e) => {
     e.respondWith(
-        fetch(e.request);
+        fetch(e.request)
+            // dynamic cache
+            .then((res) => {
+                return caches.open(CACHE_DYNAMIC_NAME)
+                    .then((cache) => {
+                        cache.put(e.request.url, res.clone());
+                        return res;
+                    })
+            })
+            // if network is unavailable
+            .catch((err) => {
+                // return 'static' cache
+                return caches.match(e.request);
+            })
     );
 });
