@@ -1,5 +1,5 @@
-const CACHE_STATIC_NAME = 'static-v13';
-const CACHE_DYNAMIC_NAME = 'dynamic-v5';
+const CACHE_STATIC_NAME = 'static-v15';
+const CACHE_DYNAMIC_NAME = 'dynamic-v6';
 const STATIC_FILES = [
     '/',
     '/index.html',
@@ -16,6 +16,19 @@ const STATIC_FILES = [
     '/src/css/roboto.css',
     '/src/css/icon.css'
 ];
+
+// function trimCache(cacheName, maxItems) {
+//   caches.open(cacheName)
+//     .then(function (cache) {
+//       return cache.keys()
+//         .then(function (keys) {
+//           if (keys.length > maxItems) {
+//             cache.delete(keys[0])
+//               .then(trimCache(cacheName, maxItems));
+//           }
+//         });
+//     })
+// }
 
 self.addEventListener('install', (e) => {
   console.log('[Service Worker] Installing Service Worker ...', e);
