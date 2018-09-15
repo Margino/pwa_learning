@@ -1,5 +1,5 @@
-const CACHE_STATIC_NAME = 'static-v11';
-const CACHE_DYNAMIC_NAME = 'dynamic-v4';
+const CACHE_STATIC_NAME = 'static-v13';
+const CACHE_DYNAMIC_NAME = 'dynamic-v5';
 
 self.addEventListener('install', (e) => {
   console.log('[Service Worker] Installing Service Worker ...', e);
@@ -46,6 +46,19 @@ self.addEventListener('activate', (e) => {
   return self.clients.claim();
 });
 
+self.addEventListener('fetch', (e) => {
+    e.respondWith(
+        cashes.open(CACHE_DYNAMIC_NAME)
+            .then((cache) => {
+                return fetch(event.request)
+                    .then((res) => {
+                        cache.put(event.request, res.clone());
+                        return res;
+                    })
+            })
+    )
+});
+
 // self.addEventListener('fetch', (e) => {
 //   e.respondWith(
 //       caches.match(e.request)
@@ -90,21 +103,21 @@ self.addEventListener('activate', (e) => {
 // });
 
 // Network with cache fallback
-self.addEventListener('fetch', (e) => {
-    e.respondWith(
-        fetch(e.request)
-            // dynamic cache
-            .then((res) => {
-                return caches.open(CACHE_DYNAMIC_NAME)
-                    .then((cache) => {
-                        cache.put(e.request.url, res.clone());
-                        return res;
-                    })
-            })
-            // if network is unavailable
-            .catch((err) => {
-                // return 'static' cache
-                return caches.match(e.request);
-            })
-    );
-});
+// self.addEventListener('fetch', (e) => {
+//     e.respondWith(
+//         fetch(e.request)
+//             // dynamic cache
+//             .then((res) => {
+//                 return caches.open(CACHE_DYNAMIC_NAME)
+//                     .then((cache) => {
+//                         cache.put(e.request.url, res.clone());
+//                         return res;
+//                     })
+//             })
+//             // if network is unavailable
+//             .catch((err) => {
+//                 // return 'static' cache
+//                 return caches.match(e.request);
+//             })
+//     );
+// });
