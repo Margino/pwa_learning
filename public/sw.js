@@ -47,16 +47,47 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-    e.respondWith(
-        cashes.open(CACHE_DYNAMIC_NAME)
-            .then((cache) => {
-                return fetch(event.request)
-                    .then((res) => {
-                        cache.put(event.request, res.clone());
-                        return res;
-                    })
-            })
-    )
+    const url = 'https://httpbin.org/get';
+    if (e.request.url.indexOf(url) > -1) {
+        e.respondWith(
+            caches.open(CACHE_DYNAMIC_NAME)
+                .then((cache) => {
+                    return fetch(e.request)
+                        .then((res) => {
+                            cache.put(e.request, res.clone());
+                            return res;
+                        })
+                })
+        );
+    } else {
+          e.respondWith(
+              caches.match(e.request)
+                .then((response) => {
+                    if (response) {
+                        // get the cached files
+                        return response;
+                    } else {
+                        // return not cached files
+                        return fetch(e.request)
+                            .then((res) => {
+                                // dynamic chace
+                                return caches.open(CACHE_DYNAMIC_NAME)
+                                    .then((cache) => {
+                                        cache.put(e.request.url, res.clone());
+                                        return res;
+                                    })
+                            })
+                            .catch((err) => {
+                                return caches.open(CACHE_STATIC_NAME)
+                                    .then((cache) => {
+                                        return cache.match('/offline.html');
+                                    })
+                            })
+                    }
+                })
+          );
+    }
+
 });
 
 // self.addEventListener('fetch', (e) => {
