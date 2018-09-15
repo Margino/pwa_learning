@@ -19,7 +19,7 @@ const STATIC_FILES = [
 
 self.addEventListener('install', (e) => {
   console.log('[Service Worker] Installing Service Worker ...', e);
-  // use event.waitUntil() because of acync
+  // use e.waitUntil() because of acync
   e.waitUntil(
       // 'static' is just an arbitraty name for the cache
       caches.open(CACHE_STATIC_NAME)
@@ -47,6 +47,17 @@ self.addEventListener('activate', (e) => {
   return self.clients.claim();
 });
 
+function isInArray(string, array) {
+  var cachePath;
+  if (string.indexOf(self.origin) === 0) { // request targets domain where we serve the page from (i.e. NOT a CDN)
+    console.log('matched ', string);
+    cachePath = string.substring(self.origin.length); // take the part of the URL AFTER the domain (e.g. after localhost:8080)
+  } else {
+    cachePath = string; // store the full request (for CDNs)
+  }
+  return array.indexOf(cachePath) > -1;
+}
+
 self.addEventListener('fetch', (e) => {
     const url = 'https://httpbin.org/get';
     if (e.request.url.indexOf(url) > -1) {
@@ -60,9 +71,9 @@ self.addEventListener('fetch', (e) => {
                         })
                 })
         );
-    } else if (new RegExp('\\b' + STATIC_FILES.join('\\b|\\b') + '\\b').test(event.request.url)) {
-      event.respondWith(
-        caches.match(event.request)
+    } else if (isInArray(e.request.url, STATIC_FILES)) {
+      e.respondWith(
+        caches.match(e.request)
       );
     } else {
           e.respondWith(
@@ -85,7 +96,7 @@ self.addEventListener('fetch', (e) => {
                             .catch((err) => {
                                 return caches.open(CACHE_STATIC_NAME)
                                     .then((cache) => {
-                                        if (e.request.url.indexOf('/help')) {
+                                        if (e.request.headers.get('accept').includes('text/html')) {
                                             return cache.match('/offline.html');
                                         }
                                     })
