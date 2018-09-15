@@ -1,5 +1,21 @@
 const CACHE_STATIC_NAME = 'static-v13';
 const CACHE_DYNAMIC_NAME = 'dynamic-v5';
+const STATIC_FILES = [
+    '/',
+    '/index.html',
+    '/offline.html',
+    '/src/js/app.js',
+    '/src/js/feed.js',
+    '/src/js/promise.js',
+    '/src/js/fetch.js',
+    '/src/js/material.min.js',
+    '/src/css/app.css',
+    '/src/css/feed.css',
+    '/src/images/main-image.jpg',
+    '/src/css/material.indigo-pink.min.css',
+    '/src/css/roboto.css',
+    '/src/css/icon.css'
+];
 
 self.addEventListener('install', (e) => {
   console.log('[Service Worker] Installing Service Worker ...', e);
@@ -10,22 +26,7 @@ self.addEventListener('install', (e) => {
         .then((cache) => {
             console.log('[Service worker] Precaching App');
             // add files to the cache
-            cache.addAll([
-                '/',
-                '/index.html',
-                '/offline.html',
-                '/src/js/app.js',
-                '/src/js/feed.js',
-                '/src/js/promise.js',
-                '/src/js/fetch.js',
-                '/src/js/material.min.js',
-                '/src/css/app.css',
-                '/src/css/feed.css',
-                '/src/images/main-image.jpg',
-                '/src/css/material.indigo-pink.min.css',
-                '/src/css/roboto.css',
-                '/src/css/icon.css'
-            ]);
+            cache.addAll(STATIC_FILES);
         })
   );
 });
@@ -59,6 +60,10 @@ self.addEventListener('fetch', (e) => {
                         })
                 })
         );
+    } else if (new RegExp('\\b' + STATIC_FILES.join('\\b|\\b') + '\\b').test(event.request.url)) {
+      event.respondWith(
+        caches.match(event.request)
+      );
     } else {
           e.respondWith(
               caches.match(e.request)
